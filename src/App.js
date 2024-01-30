@@ -1,25 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useRef, useEffect } from "react";
 
-function App() {
+export function useUpdateEffect(effect, deps) {
+  const ref = useRef(true);
+  useEffect(() => {
+    if (!ref.current) {
+      return effect();
+    } else {
+      console.log("skipping the effect");
+      ref.current = false;
+    }
+  }, deps);
+}
+
+export function App() {
+  const [data, setData] = useState(0);
+  useUpdateEffect(() => {
+    console.log("Update useUpdateEffect only", { data });
+  }, [data]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Let's skip the call in first render</h1>
+      <button onClick={() => setData(data + 1)}> result</button>
+      {data}
     </div>
   );
 }
-
-export default App;
